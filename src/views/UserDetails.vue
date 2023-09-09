@@ -22,13 +22,14 @@
 
         <!-- Right Column (60% width) -->
         <div class="ratings">
-          <h6>Ratings given by user:</h6>
-          <div class="rating-item" v-for="rating in userRatings" :key="rating.id">
+          <h6>Ratings given by user</h6>
+          <div class="rating-item" v-for="rating in user.ratings" :key="rating.ratingId">
             <div class="rating-content">
-              <!-- Display rating information here -->
-              <p>Hotel: {{ getHotelName(rating.hotelId) }}</p>
+              <p>Hotel: {{ rating.hotel.name }}</p>
+              <p>Location: {{ rating.hotel.location }}</p>
+              <p>Star: {{ rating.hotel.star }}</p>
               <p>Rating: {{ rating.rating }}</p>
-              <p>Comment: {{ rating.comment }}</p>
+              <p>Feedback: {{ rating.feedback }}</p>
             </div>
           </div>
         </div>
@@ -36,6 +37,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
