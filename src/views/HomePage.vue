@@ -1,11 +1,18 @@
 <template>
-  <h1>Welcome</h1>
+  <div>
+    <h4 class="hotels">Welcome</h4>
+
+  </div>
 </template>
 
 <script setup lang="ts">
-//
+// 
 </script>
 
 <style scoped>
-/*  */
+.hotels {
+  text-align: center;
+  margin: 20px;
+  margin-bottom: 40px;
+}
 </style>
