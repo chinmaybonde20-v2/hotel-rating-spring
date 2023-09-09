@@ -97,7 +97,7 @@ function getHotelName(hotelId) {
   margin: 0 auto;
   text-align: left;
 }
-
+/*  */
 .user-columns {
   display: flex; /* Use flexbox for column layout */
 }
