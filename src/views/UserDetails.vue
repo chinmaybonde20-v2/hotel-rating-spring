@@ -111,7 +111,7 @@ function getHotelName(hotelId) {
   flex: 60%; /* Right column takes up 60% width */
   border: 1px solid #9e9b9b;
   border-radius: 5px;
-  padding: 10px;
+  padding: 20px;
 }
 
 .rating-item {
