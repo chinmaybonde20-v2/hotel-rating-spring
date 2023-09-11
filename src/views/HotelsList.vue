@@ -22,7 +22,7 @@ const hotels = ref([]);
 
 onMounted(() => {
   // Fetch hotel data from JSON Server
-  fetch("http://localhost:3000/hotels")
+  fetch("http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/hotels")
     .then((response) => response.json())
     .then((data) => {
       hotels.value = data;
