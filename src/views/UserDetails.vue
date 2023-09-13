@@ -68,7 +68,7 @@ onMounted(() => {
     });
 
   // Fetch user ratings data
-  fetch(`http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/ratings/${userId}`)
+  fetch(`http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/ratings/users/${userId}`)
     .then((response) => response.json())
     .then((data) => {
       userRatings.value = data;

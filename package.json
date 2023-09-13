@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "sync":"aws s3 sync ./dist s3://frontend-vue-app/ --profile Himanshu_AWS",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
