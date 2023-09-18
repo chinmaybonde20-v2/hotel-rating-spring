@@ -18,16 +18,49 @@
               <p>Email: {{ user.email }}</p>
             </div>
           </div>
+          <div>
+            <h6>Leave rating for hotel</h6>
+            <div>
+              <button @click="showRatingForm">Add rating</button>
+              <div v-if="showForm">
+                <div>
+                  <label for="hotelDropdown">Select Hotel:</label>
+                  <select v-model="selectedHotel" id="hotelDropdown">
+                    <option v-for="hotel in hotels" :value="hotel.hotelId" :key="hotel.hotelId">{{ hotel.name }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="ratingDropdown">Rating:</label>
+                  <select v-model="selectedRating" id="ratingDropdown">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="feedback">Feedback:</label>
+                  <input v-model="feedback" type="text" id="feedback" />
+                </div>
+                <button @click="submitRating">Submit</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Right Column (60% width) -->
         <div class="ratings">
           <h6>Ratings given by user</h6>
-          <div class="rating-item" v-for="rating in user.ratings" :key="rating.ratingId">
+          <div
+            class="rating-item"
+            v-for="rating in userRatings"
+            :key="rating.ratingId"
+          >
             <div class="rating-content">
-              <p>Hotel: {{ rating.hotel.name }}</p>
-              <p>Location: {{ rating.hotel.location }}</p>
-              <p>Star: {{ rating.hotel.star }}</p>
+              <p>Hotel: {{ getHotelName(rating.hotelId) }}</p>
+              <p>Location: {{ getHotelLocation(rating.hotelId) }}</p>
+              <p>Star: {{ getHotelStar(rating.hotelId) }}</p>
               <p>Rating: {{ rating.rating }}</p>
               <p>Feedback: {{ rating.feedback }}</p>
             </div>
@@ -38,7 +71,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
@@ -48,10 +80,17 @@ const userId = route.params.userId;
 const user = ref({});
 const userRatings = ref([]);
 const hotels = ref([]);
+const showForm = ref(false);
+const selectedHotel = ref(null);
+const selectedRating = ref(null);
+const feedback = ref("");
+let nextRatingId = 10;
 
 onMounted(() => {
   // Fetch user data
-  fetch(`http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/users/${userId}`)
+  fetch(
+    `http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/users/${userId}`
+  )
     .then((response) => response.json())
     .then((data) => {
       user.value = data;
@@ -61,14 +100,18 @@ onMounted(() => {
     });
 
   // Fetch hotels data
-  fetch("http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/hotels")
+  fetch(
+    "http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/hotels"
+  )
     .then((response) => response.json())
     .then((data) => {
       hotels.value = data;
     });
 
   // Fetch user ratings data
-  fetch(`http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/ratings/users/${userId}`)
+  fetch(
+    `http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/ratings/users/${userId}`
+  )
     .then((response) => response.json())
     .then((data) => {
       userRatings.value = data;
@@ -82,6 +125,55 @@ function getHotelName(hotelId) {
   const hotel = hotels.value.find((h) => h.hotelId === hotelId);
   return hotel ? hotel.name : "";
 }
+
+function getHotelLocation(hotelId) {
+  const hotel = hotels.value.find((h) => h.hotelId === hotelId);
+  return hotel ? hotel.location : "";
+}
+
+function getHotelStar(hotelId) {
+  const hotel = hotels.value.find((h) => h.hotelId === hotelId);
+  return hotel ? hotel.star : "";
+}
+
+const showRatingForm = () => {
+  showForm.value = true;
+};
+
+const submitRating = () => {
+  if (!selectedHotel.value || !selectedRating.value || !feedback.value) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  const newRating = {
+    ratingId: nextRatingId++,
+    userId: userId,
+    hotelId: selectedHotel.value,
+    rating: selectedRating.value,
+    feedback: feedback.value,
+  };
+
+  fetch("http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/ratings/addrating", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newRating),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Rating added successfully:", data);
+      userRatings.value.push(data);
+      selectedHotel.value = null;
+      selectedRating.value = null;
+      feedback.value = "";
+      showForm.value = false;
+    })
+    .catch((error) => {
+      console.error("Error adding rating:", error);
+    });
+};
 </script>
 
 <style scoped>
@@ -95,22 +187,22 @@ function getHotelName(hotelId) {
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  max-width: 800px; /* Adjust the maximum width as needed */
+  max-width: 800px;
   margin: 0 auto;
   text-align: left;
 }
-/*  */
+
 .user-columns {
-  display: flex; /* Use flexbox for column layout */
+  display: flex;
 }
 
 .user-info {
-  flex: 40%; /* Left column takes up 40% width */
-  margin-right: 20px; /* Add some spacing between columns */
+  flex: 40%;
+  margin-right: 20px;
 }
 
 .ratings {
-  flex: 60%; /* Right column takes up 60% width */
+  flex: 60%;
   border: 1px solid #9e9b9b;
   border-radius: 5px;
   padding: 20px;
@@ -127,8 +219,8 @@ function getHotelName(hotelId) {
 
 .rating-content {
   text-align: left;
-  border: 1px solid #ddd; /* Add a border to the rating-content div */
-  padding: 10px; /* Adjust padding as needed */
+  border: 1px solid #ddd;
+  padding: 10px;
 }
 
 .dp {
@@ -137,4 +229,3 @@ function getHotelName(hotelId) {
   margin: auto;
 }
 </style>
-

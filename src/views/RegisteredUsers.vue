@@ -7,14 +7,14 @@
           <div class="user-card-inner">
             <h3>{{ user.name }}</h3>
             <p>Email: {{ user.email }}</p>
-            <router-link :to="'/users/' + user.userId">View More</router-link>
+            <button class="view-details-button" @click="navigateToUserDetails(user.userId)">View Details</button>
             <!-- Add more user details here as needed -->
           </div>
         </div>
       </div>
     </div>
   </div>
-</template>
+</template>>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
@@ -25,7 +25,7 @@ const router = useRouter();
 
 onMounted(() => {
   // Fetch user data from JSON Server
-  fetch("http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/users")
+  fetch("http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/users")
     .then((response) => response.json())
     .then((data) => {
       users.value = data;
@@ -37,6 +37,8 @@ function navigateToUserDetails(userId) {
   router.push(`/users/${userId}`);
 }
 </script>
+
+
 
 <style scoped>
 .user-cards-container {
@@ -74,5 +76,21 @@ function navigateToUserDetails(userId) {
   text-align: center;
   margin: 20px;
   margin-bottom: 40px;
+}
+
+/* Button Style */
+.view-details-button {
+  background-color: #007bff; /* Blue color for the button */
+  color: #fff; /* White text color */
+  padding: 5px; /* Adjust padding for the button */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Add hover effect */
+  margin: auto;
+}
+
+.view-details-button:hover {
+  background-color: #0056b3; /* Darker blue color on hover */
 }
 </style>
