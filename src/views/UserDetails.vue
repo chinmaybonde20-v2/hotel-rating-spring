@@ -18,51 +18,70 @@
               <p>Email: {{ user.email }}</p>
             </div>
           </div>
-          <div>
-            <h6>Leave rating for hotel</h6>
-            <div>
-              <button @click="showRatingForm">Add rating</button>
-              <div v-if="showForm">
-                <div>
-                  <label for="hotelDropdown">Select Hotel:</label>
-                  <select v-model="selectedHotel" id="hotelDropdown">
-                    <option v-for="hotel in hotels" :value="hotel.hotelId" :key="hotel.hotelId">{{ hotel.name }}</option>
-                  </select>
+          <div class="card rating-card">
+            <h6>Leave a Rating for a Hotel</h6>
+            <div class="rating-form">
+              <button @click="showRatingForm" class="btn btn-primary">Add Rating</button>
+              <!-- Modal -->
+              <div class="modal" tabindex="-1" role="dialog" :class="{ 'show': showForm }">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Add Rating</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeForm">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-group">
+                        <label for="hotelDropdown">Select Hotel:</label>
+                        <select v-model="selectedHotel" id="hotelDropdown" class="form-control">
+                          <option v-for="hotel in hotels" :value="hotel.hotelId" :key="hotel.hotelId">{{ hotel.name }}</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="ratingDropdown">Rating:</label>
+                        <select v-model="selectedRating" id="ratingDropdown" class="form-control">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="feedback">Feedback:</label>
+                        <textarea v-model="feedback" id="feedback" class="form-control"></textarea>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                     
+                      <button @click="submitRating" class="btn btn-primary">Submit</button>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label for="ratingDropdown">Rating:</label>
-                  <select v-model="selectedRating" id="ratingDropdown">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="feedback">Feedback:</label>
-                  <input v-model="feedback" type="text" id="feedback" />
-                </div>
-                <button @click="submitRating">Submit</button>
               </div>
+              <!-- End Modal -->
             </div>
           </div>
         </div>
 
         <!-- Right Column (60% width) -->
         <div class="ratings">
-          <h6>Ratings given by user</h6>
-          <div
-            class="rating-item"
-            v-for="rating in userRatings"
-            :key="rating.ratingId"
-          >
-            <div class="rating-content">
-              <p>Hotel: {{ getHotelName(rating.hotelId) }}</p>
-              <p>Location: {{ getHotelLocation(rating.hotelId) }}</p>
-              <p>Star: {{ getHotelStar(rating.hotelId) }}</p>
-              <p>Rating: {{ rating.rating }}</p>
-              <p>Feedback: {{ rating.feedback }}</p>
+          <h6>Ratings Given by User</h6>
+          <div class="rating-list">
+            <div
+              class="rating-item"
+              v-for="rating in userRatings"
+              :key="rating.ratingId"
+            >
+              <div class="rating-content">
+                <p>Hotel: {{ getHotelName(rating.hotelId) }}</p>
+                <p>Location: {{ getHotelLocation(rating.hotelId) }}</p>
+                <p>Star: {{ getHotelStar(rating.hotelId) }}</p>
+                <p>Rating: {{ rating.rating }}</p>
+                <p>Feedback: {{ rating.feedback }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -70,7 +89,6 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
@@ -84,7 +102,7 @@ const showForm = ref(false);
 const selectedHotel = ref(null);
 const selectedRating = ref(null);
 const feedback = ref("");
-let nextRatingId = 10;
+let nextRatingId = null;
 
 onMounted(() => {
   // Fetch user data
@@ -115,6 +133,8 @@ onMounted(() => {
     .then((response) => response.json())
     .then((data) => {
       userRatings.value = data;
+      // Calculate the next available ratingId based on the length of userRatings
+      nextRatingId = userRatings.value.length + 1;
     })
     .catch((error) => {
       console.error("Error fetching user ratings:", error);
@@ -139,6 +159,9 @@ function getHotelStar(hotelId) {
 const showRatingForm = () => {
   showForm.value = true;
 };
+const closeForm = () => {
+  showForm.value = false;
+};
 
 const submitRating = () => {
   if (!selectedHotel.value || !selectedRating.value || !feedback.value) {
@@ -147,7 +170,7 @@ const submitRating = () => {
   }
 
   const newRating = {
-    ratingId: nextRatingId++,
+    ratingId: nextRatingId, // Use the calculated nextRatingId
     userId: userId,
     hotelId: selectedHotel.value,
     rating: selectedRating.value,
@@ -169,13 +192,15 @@ const submitRating = () => {
       selectedRating.value = null;
       feedback.value = "";
       showForm.value = false;
+
+      // Increment the nextRatingId for the next submission
+      nextRatingId++;
     })
     .catch((error) => {
       console.error("Error adding rating:", error);
     });
 };
 </script>
-
 <style scoped>
 .user-details {
   text-align: center;
@@ -227,5 +252,40 @@ const submitRating = () => {
   height: 200px;
   width: 200px;
   margin: auto;
+}
+
+.rating-form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.modal.show {
+  display: block;
+  background: rgba(0, 0, 0, 0.5);
+}
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+.rating-card{
+  padding: 20px;
+  margin-top: 10px;
 }
 </style>
