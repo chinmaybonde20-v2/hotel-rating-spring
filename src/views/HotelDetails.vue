@@ -1,33 +1,32 @@
 <template>
   <div class="user-details">
-    <h4>User Details</h4>
+    <h4>Hotel Details</h4>
     <hr />
-    <div class="user-card">
+    <div class="hotel-card" v-if="hotel.value">
       <div class="user-columns">
         <!-- Left Column (40% width) -->
         <div class="user-info">
           <div class="card">
             <img
-              src="https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png"
+              src="https://png.pngtree.com/png-clipart/20190705/original/pngtree-hotel-icon-for-personal-and-commercial-use-png-image_4341927.jpg"
               class="card-img-top dp"
               alt="User Avatar"
             />
             <hr />
             <div class="card-body">
-              <p>Name: {{ user.name }}</p>
-              <p>Email: {{ user.email }}</p>
+              <h5>Hotel Name: {{ hotel.value.name }}</h5>
+              <p>Location: {{ hotel.value.location }}</p>
+              <p>Star: {{ hotel.value.star }}</p>
             </div>
           </div>
         </div>
 
         <!-- Right Column (60% width) -->
         <div class="ratings">
-          <h6>Ratings given by user</h6>
-          <div class="rating-item" v-for="rating in user.ratings" :key="rating.ratingId">
+          <h6>Ratings given by users</h6>
+          <div class="rating-item" v-for="rating in hotel.value.ratings" :key="rating.ratingId">
             <div class="rating-content">
-              <p>Hotel: {{ rating.hotel.name }}</p>
-              <p>Location: {{ rating.hotel.location }}</p>
-              <p>Star: {{ rating.hotel.star }}</p>
+              <h6>Username: {{ rating.user.name }}</h6>
               <p>Rating: {{ rating.rating }}</p>
               <p>Feedback: {{ rating.feedback }}</p>
             </div>
@@ -38,50 +37,33 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const userId = route.params.userId;
-const user = ref({});
-const userRatings = ref([]);
-const hotels = ref([]);
-
-onMounted(() => {
-  // Fetch user data
-  fetch(`http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/users/${userId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      user.value = data;
-    })
-    .catch((error) => {
-      console.error("Error fetching user data:", error);
-    });
-
-  // Fetch hotels data
-  fetch("http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/hotels")
-    .then((response) => response.json())
-    .then((data) => {
-      hotels.value = data;
-    });
-
-  // Fetch user ratings data
-  fetch(`http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/ratings/users/${userId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      userRatings.value = data;
-    })
-    .catch((error) => {
-      console.error("Error fetching user ratings:", error);
-    });
+const hotelId = route.params.hotelId;
+const hotel = ref({
+  value: {
+    name: "Hotel Oberoi",
+    location: "Marine Lines",
+    star: "5",
+    ratings: [
+      {
+        ratingId: "1",
+        user: { name: "Manpreet" },
+        rating: "3",
+        feedback: "Great experience",
+      },
+      {
+        ratingId: "2",
+        user: { name: "Jayesh" },
+        rating: "4",
+        feedback: "Excellent staff, food, and service. Recommended",
+      },
+    ],
+  },
 });
-
-function getHotelName(hotelId) {
-  const hotel = hotels.value.find((h) => h.hotelId === hotelId);
-  return hotel ? hotel.name : "";
-}
 </script>
 
 <style scoped>
@@ -137,4 +119,5 @@ function getHotelName(hotelId) {
   margin: auto;
 }
 </style>
+
 

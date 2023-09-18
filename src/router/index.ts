@@ -5,6 +5,7 @@ import HomePage from '../views/HomePage.vue';
 import ContactUs from '../views/ContactUs.vue';
 import AboutUs from '../views/AboutUs.vue';
 import UserDetails from '../views/UserDetails.vue'; // Import the UserDetails component
+import HotelDetails from '@/views/HotelDetails.vue';
 
 const routes: Array<RouteRecordRaw> = [
 
@@ -37,6 +38,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/users/:userId', // Dynamic route parameter
     name: 'user-details', // Name for the route
     component: UserDetails // Use the UserDetails component for user details
+  },
+  {
+    path: '/hotels/:hotelId', // Dynamic route parameter
+    name: 'hotel-details', // Name for the route
+    component: HotelDetails // Use the UserDetails component for user details
   }
 ]
 
