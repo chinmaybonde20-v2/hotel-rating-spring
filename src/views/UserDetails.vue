@@ -51,7 +51,7 @@ const hotels = ref([]);
 
 onMounted(() => {
   // Fetch user data
-  fetch(`http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/users/${userId}`)
+  fetch(`http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/users/${userId}`)
     .then((response) => response.json())
     .then((data) => {
       user.value = data;
@@ -61,14 +61,14 @@ onMounted(() => {
     });
 
   // Fetch hotels data
-  fetch("http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/hotels")
+  fetch("http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/hotels")
     .then((response) => response.json())
     .then((data) => {
       hotels.value = data;
     });
 
   // Fetch user ratings data
-  fetch(`http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/ratings/users/${userId}`)
+  fetch(`http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/ratings/users/${userId}`)
     .then((response) => response.json())
     .then((data) => {
       userRatings.value = data;

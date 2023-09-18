@@ -25,7 +25,7 @@ const router = useRouter();
 
 onMounted(() => {
   // Fetch user data from JSON Server
-  fetch("http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/users")
+  fetch("http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/users")
     .then((response) => response.json())
     .then((data) => {
       users.value = data;

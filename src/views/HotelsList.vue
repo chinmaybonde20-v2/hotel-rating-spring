@@ -22,7 +22,7 @@ const hotels = ref([]);
 
 onMounted(() => {
   // Fetch hotel data from JSON Server
-  fetch("http://sample-alb-1918559151.ap-south-1.elb.amazonaws.com/hotels")
+  fetch("http://microservice-alb-1225467990.ap-south-1.elb.amazonaws.com/hotels")
     .then((response) => response.json())
     .then((data) => {
       hotels.value = data;
