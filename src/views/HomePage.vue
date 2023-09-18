@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4 class="hotels">Welcome</h4>
+    <h4 class="hotels">Welcome to hotel ratings app</h4>
 
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4 class="hotels">Hotels</h4>
+    <h4 class="hotels">Hotels List</h4>
     <div class="hotel-cards-container">
       <div class="hotel-cards">
         <div class="hotel-card" v-for="hotel in hotels" :key="hotel.hotelId">
@@ -72,5 +72,20 @@ function navigateToHotelDetails(hotelId) {
   text-align: center;
   margin: 20px;
   margin-bottom: 40px;
+}
+
+.view-details-button {
+  background-color: #007bff; /* Blue color for the button */
+  color: #fff; /* White text color */
+  padding: 5px; /* Adjust padding for the button */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Add hover effect */
+  margin: auto;
+}
+
+.view-details-button:hover {
+  background-color: #0056b3; /* Darker blue color on hover */
 }
 </style>
